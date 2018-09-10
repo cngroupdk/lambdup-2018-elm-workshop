@@ -15,3 +15,6 @@ repl-temp-*
 
 # Desktop Services Store on macOS
 .DS_Store
+
+# Others
+.vscode

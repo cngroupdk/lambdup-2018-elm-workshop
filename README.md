@@ -49,9 +49,98 @@ After installation run the editor and follow these steps:
 - install [Elm extension for VS Code](https://marketplace.visualstudio.com/items?itemName=sbrink.elm)
 - add following lines to your ["User Settings"](https://code.visualstudio.com/docs/getstarted/settings) in VS Code:
 
+  - on Windows:
+
+    ```
+        "[elm]": {
+            "editor.formatOnSave": true,
+        },
+        "elm.formatCommand": ".\\node_modules\\.bin\\elm-format",
+        "elm.compiler": ".\\node_modules\\.bin\\elm",
+    ```
+
+  - on macOS and Linux:
+
+    ```
+        "[elm]": {
+            "editor.formatOnSave": true,
+        },
+        "elm.formatCommand": "./node_modules/.bin/elm-format",
+        "elm.compiler": "./node_modules/.bin/elm",
+    ```
+
+---
+
+## Useful Links
+
+- **[Ellie Workshop Code](https://ellie-app.com/3kgtd6VfnmBa1)**
+- [Elm Packages](https://package.elm-lang.org/)
+- [HTML to Elm](https://mbylstra.github.io/html-to-elm/)
+- [JSON to Elm](https://noredink.github.io/json-to-elm/)
+
+## Snippets
+
+- search form
+
+  ```html
+  <form class="search-form">
+    <input class="search-input" type="text" placeholder="Search Movies by Title">
+    <input class="search-button" type="submit" value="Search">
+  </form>
   ```
-      "[elm]": {
-          "editor.formatOnSave": true,
-      },
-      "elm.formatCommand": "./node_modules/.bin/elm-format",
+
+- movie list
+
+  ```html
+  <div class="movie-list">
+    <div class="movie-item">
+      <div class="movie-item-poster" style="background-image: url('https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_SX300.jpg');"></div>
+      <h3 class="movie-item-title">Blade Runner 2049</h3>
+    </div>
+  </div>
+  ```
+
+- HTTP request
+
+  ```elm
+  fetchSearchResults : Cmd Msg
+  fetchSearchResults =
+      let
+          url =
+              Url.Builder.crossOrigin "https://www.omdbapi.com/"
+                  []
+                  [ Url.Builder.string "apikey" "2099b44a"
+                  , Url.Builder.string "s" "blade runner"
+                  ]
+      in
+      decodeSearchResults
+          |> Http.get url
+          |> RemoteData.sendRequest
+          |> Cmd.map SearchResultsReceived
+  ```
+
+- `SearchResults` JSON
+
+  ```json
+  {
+    "Search": [
+      {
+        "Title": "Blade Runner",
+        "Year": "1982",
+        "Type": "movie",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BNzQzMzJhZTEtOWM4NS00MTdhLTg0YjgtMjM4MDRkZjUwZDBlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
+      }
+    ]
+  }
+  ```
+
+- `Movie` JSON
+
+  ```json
+  {
+    "Title": "Blade Runner",
+    "Year": "1982",
+    "Type": "movie",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BNzQzMzJhZTEtOWM4NS00MTdhLTg0YjgtMjM4MDRkZjUwZDBlXkEyXkFqcGdeQXVyNjU0OTQ0OTY@._V1_SX300.jpg"
+  }
   ```
