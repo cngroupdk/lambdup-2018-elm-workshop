@@ -1,0 +1,111 @@
+@import 'tachyons-sass/tachyons.scss';
+
+body {
+  @extend .w-100;
+  @extend .sans-serif;
+  @extend .bg-white;
+}
+
+img {
+  margin: 20px 0;
+  max-width: 200px;
+}
+
+pre {
+  @extend .pa2;
+  @extend .ma2;
+  @extend .ba;
+  @extend .b--black-20;
+
+  background-color: #f5ecf0;
+  color: #272727;
+  word-wrap: normal;
+  white-space: pre-wrap;
+}
+
+.header {
+  @extend .pa3;
+  @extend .white;
+  @extend .pt0;
+  @extend .pb4;
+
+  background-color: #1b1746;
+}
+
+.search-form {
+  @extend .cf;
+  @extend .mw7;
+  @extend .center;
+}
+
+.search-input {
+  @extend .f6;
+  @extend .f5-l;
+  @extend .input-reset;
+  @extend .bn;
+  @extend .fl;
+  @extend .black-80;
+  @extend .bg-white;
+  @extend .pa3;
+  @extend .lh-solid;
+  @extend .w-75;
+  @extend .w-80-l;
+  @extend .br-pill;
+  @extend .br--left;
+}
+
+.search-button {
+  @extend .f6;
+  @extend .f5-l;
+  @extend .button-reset;
+  @extend .fl;
+  @extend .pv3;
+  @extend .tc;
+  @extend .bg-animate;
+  @extend .white;
+  @extend .pointer;
+  @extend .w-25;
+  @extend .w-20-l;
+  @extend .br-pill;
+  @extend .br--right;
+  @extend .bn;
+  background-color: #ff0065;
+
+  &:hover {
+    background-color: lighten(#ff0065, 10%);
+  }
+}
+
+.movie-list {
+  @extend .cf;
+  @extend .pa2;
+  @extend .flex;
+  @extend .flex-wrap;
+
+  > h3 {
+    @extend .pa2;
+  }
+}
+
+.movie-item {
+  @extend .fl;
+  @extend .w-50;
+  @extend .w-25-m;
+  @extend .w-20-l;
+  @extend .pa2;
+  @extend .link;
+}
+
+.movie-item-title {
+  @extend .mt2;
+  @extend .f5;
+  color: #1c1746;
+}
+
+.movie-item-poster {
+  @extend .aspect-ratio--4x6;
+  background: url(http://www.mobileservicesolutions.com.au/wp-content/uploads/2013/11/dummy-image-portrait.jpg)
+    no-repeat center center;
+  background-size: cover;
+  background-color: lightgray;
+}

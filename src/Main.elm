@@ -1,8 +1,15 @@
-module Main exposing (..)
+module Main exposing (main)
 
 import Browser
-import Html exposing (Html, text, div, h1, img)
-import Html.Attributes exposing (src)
+import Html exposing (Html, a, div, form, h1, h2, h3, h4, img, input, label, pre, text)
+import Html.Attributes exposing (attribute, class, for, href, id, name, placeholder, src, style, type_, value)
+import Html.Events exposing (onInput, onSubmit)
+import Http
+import Json.Decode
+import Json.Decode.Pipeline
+import RemoteData exposing (RemoteData(..), WebData)
+import Url.Builder
+
 
 
 ---- MODEL ----
@@ -37,8 +44,10 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ img [ src "/logo.svg" ] []
-        , h1 [] [ text "Your Elm App is working!" ]
+        [ div [ class "header" ]
+            [ img [ src "%PUBLIC_URL%/logo.svg" ] []
+            , h1 [] [ text "Hello, LambdUp Workshop!" ]
+            ]
         ]
 
 
