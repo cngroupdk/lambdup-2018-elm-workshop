@@ -12,16 +12,83 @@ import Url.Builder
 
 
 
+---- HTTP ----
+
+
+type alias SearchResults =
+    { search : List Movie
+    }
+
+
+type alias Movie =
+    { title : String
+    , year : String
+    , type_ : String
+    , poster : Maybe String
+    }
+
+
+decodeMovie : Json.Decode.Decoder Movie
+decodeMovie =
+    Json.Decode.succeed Movie
+        |> Json.Decode.Pipeline.required "Title" Json.Decode.string
+        |> Json.Decode.Pipeline.required "Year" Json.Decode.string
+        |> Json.Decode.Pipeline.required "Type" Json.Decode.string
+        |> Json.Decode.Pipeline.required "Poster"
+            (Json.Decode.map
+                (\str ->
+                    case str of
+                        "N/A" ->
+                            Nothing
+
+                        _ ->
+                            Just str
+                )
+                Json.Decode.string
+            )
+
+
+decodeSearchResults : Json.Decode.Decoder SearchResults
+decodeSearchResults =
+    Json.Decode.succeed SearchResults
+        |> Json.Decode.Pipeline.optional "Search"
+            (Json.Decode.list decodeMovie)
+            []
+
+
+fetchSearchResults : String -> Cmd Msg
+fetchSearchResults title =
+    let
+        url =
+            Url.Builder.crossOrigin "https://www.omdbapi.com/"
+                []
+                [ Url.Builder.string "apikey" "2099b44a"
+                , Url.Builder.string "s" title
+                ]
+    in
+    decodeSearchResults
+        |> Http.get url
+        |> RemoteData.sendRequest
+        |> Cmd.map SearchResultsReceived
+
+
+
 ---- MODEL ----
 
 
 type alias Model =
-    {}
+    { searchString : String
+    , searchResults : WebData SearchResults
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( {}, Cmd.none )
+    ( { searchString = "Blade Runner"
+      , searchResults = Loading
+      }
+    , fetchSearchResults "Blade Runner"
+    )
 
 
 
@@ -30,11 +97,37 @@ init =
 
 type Msg
     = NoOp
+    | EnteredSearchString String
+    | SearchResultsReceived (WebData SearchResults)
+    | ClickedSearch
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    ( model, Cmd.none )
+    case msg of
+        NoOp ->
+            ( model, Cmd.none )
+
+        EnteredSearchString value ->
+            ( { model
+                | searchString = value
+              }
+            , Cmd.none
+            )
+
+        SearchResultsReceived searchResults ->
+            ( { model
+                | searchResults = Debug.log "searchResults" searchResults
+              }
+            , Cmd.none
+            )
+
+        ClickedSearch ->
+            ( { model
+                | searchResults = Loading
+              }
+            , fetchSearchResults model.searchString
+            )
 
 
 
@@ -46,8 +139,72 @@ view model =
     div []
         [ div [ class "header" ]
             [ img [ src "%PUBLIC_URL%/logo.svg" ] []
-            , h1 [] [ text "Hello, LambdUp Workshop!" ]
+            , form
+                [ class "search-form"
+                , onSubmit ClickedSearch
+                ]
+                [ input
+                    [ class "search-input"
+                    , type_ "text"
+                    , placeholder "Search Movies by Title"
+                    , value model.searchString
+                    , onInput EnteredSearchString
+                    ]
+                    []
+                , input
+                    [ class "search-button"
+                    , type_ "submit"
+                    , value "Search"
+                    ]
+                    []
+                ]
             ]
+        , viewMovieList model.searchResults
+        ]
+
+
+viewMovieList : WebData SearchResults -> Html Msg
+viewMovieList searchResults =
+    div [ class "movie-list" ] <|
+        case searchResults of
+            NotAsked ->
+                [ text "Please search for movies" ]
+
+            Loading ->
+                [ text "Loading..." ]
+
+            Failure _ ->
+                [ text "Error!" ]
+
+            Success results ->
+                case results.search of
+                    [] ->
+                        [ text "No results" ]
+
+                    movies ->
+                        List.map viewMovieItem
+                            movies
+
+
+viewMovieItem : Movie -> Html Msg
+viewMovieItem movie =
+    let
+        posterAttributes =
+            case movie.poster of
+                Nothing ->
+                    []
+
+                Just posterUrl ->
+                    [ style "backgroundImage"
+                        ("url(" ++ posterUrl ++ ")")
+                    ]
+    in
+    div [ class "movie-item" ]
+        [ div
+            ([ class "movie-item-poster" ] ++ posterAttributes)
+            []
+        , h3 [ class "movie-item-title" ]
+            [ text movie.title ]
         ]
 
 
